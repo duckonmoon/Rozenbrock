@@ -5,10 +5,13 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 fun main() {
-    val v1 = Vector.fromArray(arrayOf(3.0,1.0).toDoubleArray())
-    val v2 = Vector.fromArray(arrayOf(2.0,2.0).toDoubleArray())
-    wow(v2, v1)
-    ortogonalization2(v1,v2)
+    val a1 = Vector.fromArray(arrayOf(1.0, 0.0, 1.0, 0.0, 0.0).toDoubleArray())
+    val a2 = Vector.fromArray(arrayOf(2.0, 1.0, 0.0, 1.0, 0.0).toDoubleArray())
+    val a3 = Vector.fromArray(arrayOf(3.0, 2.0, 1.0, 0.0, 1.0).toDoubleArray())
+    val (d1, d2, d3) = ortogonalization3(a1, a2, a3)
+    println(d1)
+    println(d2)
+    println(d3)
 }
 
 // proj_u(v)
@@ -26,41 +29,25 @@ fun ortogonalization2(u: Vector, v: Vector): Vector {
     return Vector.fromArray(arrayOf(0.0).toDoubleArray())
 }
 
-fun ortogonalization3(u: Vector, v: Vector): Vector {
+fun ortogonalization3(u: Vector, v: Vector, k: Vector): List<Vector> {
     val u1 = u.copy()
     val u2 = v.subtract(u1.proj(v))
-
-    print(u1.divide(u1.norm()))
-    print(u2.divide(u2.norm()))
-    return Vector.fromArray(arrayOf(0.0).toDoubleArray())
+    val u3 = k.subtract(u1.proj(k)).subtract(u2.proj(k))
+    return listOf(
+            u1.divide(u1.norm()),
+            u2.divide(u2.norm()),
+            u3.divide(u3.norm())
+    )
 }
 
 
-
-fun wow(x0: Vector, x: Vector) {
-    // процес ортогоналізації грама шмідта
-    val l1 = x0[0] - x[0]
-    // writer.WriteLine("L1 = " + L1 );
-    val l2 = x0[1] - x[1]
-    // writer.WriteLine("L2 = " + L2 );
-
-    // ваще хз блять
-    val a1 = Vector.fromArray(arrayOf(l1, l2).toDoubleArray())
-    val a2 = Vector.fromArray(arrayOf(0.0, l2).toDoubleArray())
+fun wow(a1: Vector, a2: Vector) {
 
     val d1 = a1.divide(norm(a1))
 
     val b = a2.subtract(d1.proj(a2))
 
-
-//            Vector.fromArray(arrayOf(
-//            a2[0] - (a2[0] * d1[0] + a2[1] * d1[1]) * d1[0],
-//            a2[1] - (a2[0] * d1[0] + a2[1] * d1[1]) * d1[1]
-//    ).toDoubleArray())
-
-
-
-    val d = b.divide(norm(b))
+    val d = b.divide(b.norm())
     println(d)
 }
 

@@ -1,5 +1,6 @@
 package com.unvier.mo.util
 
+import com.unvier.mo.proj
 import org.la4j.Vector
 import kotlin.math.abs
 import kotlin.math.pow
@@ -221,19 +222,15 @@ class Rozenbrok(val alfa: Double,
             val a2 = Vector.fromArray(arrayOf(0.0, l2, l3).toDoubleArray())
             val a3 = Vector.fromArray(arrayOf(0.0, 0.0, l3).toDoubleArray())
 
-            d1 = a1.divide(norm(a1))
 
-            val b = Vector.fromArray(arrayOf(
-                    a2[0] - (a2[0] * d1[0] + a2[1] * d1[1]) * d1[0],
-                    a2[1] - (a2[0] * d1[0] + a2[1] * d1[1]) * d1[1]
-            ).toDoubleArray())
+            val result = ortogonalization3(a1, a2, a3)
+            d1 = result[0]
+            d2 = result[1]
+            d3 = result[2]
 
-            d2[0] = b[0] / norm(b)
-            d2[1] = b[1] / norm(b)
-            d3[2] = b[2] / norm(b)
-
-            writer.writeLine("d1(${d1[0]}; ${d1[1]}; ${d2[2]})")
-            writer.writeLine("d2(${d2[0]}; ${d2[1]}); ${d3[2]}")
+            writer.writeLine("d1(${d1[0]}; ${d1[1]}; ${d1[2]})")
+            writer.writeLine("d2(${d2[0]}; ${d2[1]}); ${d2[2]}")
+            writer.writeLine("d3(${d3[0]}; ${d3[1]}; ${d3[2]})")
 
             x = y.copy()
 
@@ -254,5 +251,16 @@ class Rozenbrok(val alfa: Double,
             sum += vector[i].pow(2)
         }
         return sqrt(sum)
+    }
+
+    fun ortogonalization3(u: Vector, v: Vector, k: Vector): List<Vector> {
+        val u1 = u.copy()
+        val u2 = v.subtract(u1.proj(v))
+        val u3 = k.subtract(u1.proj(k)).subtract(u2.proj(k))
+        return listOf(
+                u1.divide(u1.norm()),
+                u2.divide(u2.norm()),
+                u3.divide(u3.norm())
+        )
     }
 }
